@@ -1,0 +1,166 @@
+<html>
+   <head>
+      <link rel="stylesheet" type="text/css" href="./styles.css"/>
+      <style>
+         /* On Page css*/ 
+         div#list {
+         display: grid;
+         grid-template-columns: repeat(3, 1fr);
+         grid-gap: 20px;
+         background: #ADD8E6;
+         }
+         div {
+         width: 250px;
+         background: #fff;
+         border-radius: 30px;
+         }
+         p {
+         padding-left: 20px;
+         }
+         button {
+         margin-left: 20px;
+         background: #ADD8E6;
+         border: 0px;
+         padding: 9px 20px;
+         color: white;
+         border-radius: 20px;
+         margin-bottom: 10px;
+         cursor: pointer;
+         }
+         button:hover{
+         background: #ADD8E6;
+         color: black;
+         }
+         button:disabled{
+         display:none;
+         }
+         input#myInput {
+         margin: 10px;
+         width: 300px;
+         }
+         p1{
+         padding-left: 20px;
+         }
+      </style>
+   </head>
+   <body>
+      <h1 class="heading">List of Appointments today</h1>
+      <!--Filter Section Start-->
+      <span>Search By Name</span>
+      <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for names.." title="Type in a name"/>
+      <label for="emg">Emergency level:</label>
+      <select name="emg" id="emg" onchange="myFunction()">
+         <option value="Normal">Normal</option>
+         <option value="High">High</option>
+      </select>
+      <!--Filter Section End-->
+      <script>
+         // Javascript Function to filter the value
+         
+               function myFunction() {
+         var input, filter, ul, li, a, i, txtValue;
+                var e = document.getElementById("emg").value;
+           // Condition to filter the High emergency value
+                   if(e=='High'){
+                
+                   filter = e.toUpperCase();
+                   ul = document.getElementById("list");
+                   li = ul.getElementsByTagName("div");
+                   for (i = 0; i < li.length; i++) {
+                       a = li[i].getElementsByTagName("p1")[0];
+                       txtValue = a.textContent || a.innerText;
+                       if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                           li[i].style.display = "";
+         		 li[i].style.background = "red";
+         		 li[i].style.color = "white";
+                       } else {
+                           li[i].style.display = "none";
+                       }
+                   }
+                   } // Condition to filter the Normal emergency value
+                   else{
+            
+                       input = document.getElementById("myInput");
+                   filter = input.value.toUpperCase();
+                   ul = document.getElementById("list");
+                   li = ul.getElementsByTagName("div");
+                   for (i = 0; i < li.length; i++) {
+                       a = li[i].getElementsByTagName("p")[0];
+                       txtValue = a.textContent || a.innerText;
+                       if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                           li[i].style.display = "";
+         		 li[i].style.background = "white";
+         		 li[i].style.color = "black";
+                       } else {
+                           li[i].style.display = "none";
+                       }
+                   }
+                       
+                       }
+               }
+               	
+            
+      </script>
+      <div id="list"></div>
+      <script>
+         const electron = require("electron");
+         const { ipcRenderer } = electron;
+         
+         ipcRenderer.send("appointment:request:today");
+         
+         ipcRenderer.on("appointment:response:today", (event, appointments) => {
+           const listDiv = document.getElementById("list");
+           listDiv.innerHTML = "";
+         // For loop to print print the data 
+           appointments.forEach(appointment => {
+             const appointmentDiv = document.createElement("div");
+         
+             const nameParagraph = document.createElement("p");
+             nameParagraph.innerHTML = `Name: ${appointment.name}`;
+         
+             const numberParagraph = document.createElement("p");
+             numberParagraph.innerHTML = `Phone Number: ${appointment.number}`;
+         
+         
+             const dateParagraph = document.createElement("p");
+             dateParagraph.innerHTML = `Date: ${appointment.date}`;
+         
+             const time = document.createElement("p");
+             time.innerHTML = `Time: ${appointment.time}`;
+         
+             const symptoms = document.createElement("p");
+             symptoms.innerHTML = `Symptoms: ${appointment.symptoms}`;
+         
+			 const emeg = document.createElement("p1");
+			 emeg.innerHTML = `Emergency level: ${appointment.emeg}`;
+         
+             const doneParagraph = document.createElement("p");
+             doneParagraph.innerHTML = `Done: ${appointment.done ? "Yes" : "No"}`;
+         
+             const doneButton = document.createElement("button");
+             doneButton.innerHTML = "Done";
+             doneButton.disabled = appointment.done ? true : false;
+             doneButton.onclick = () => done(appointment.id);
+         
+         
+             appointmentDiv.appendChild(nameParagraph);
+             appointmentDiv.appendChild(numberParagraph);
+             appointmentDiv.appendChild(dateParagraph);
+             appointmentDiv.appendChild(time);
+             appointmentDiv.appendChild(symptoms);
+			 appointmentDiv.appendChild(emeg);
+             appointmentDiv.appendChild(doneParagraph);
+             appointmentDiv.appendChild(doneButton);
+         
+         
+         
+             listDiv.append(appointmentDiv);
+           });
+         });
+         
+         const done = id => {
+           ipcRenderer.send("appointment:done", id);
+         };
+      </script>
+   </body>
+</html>

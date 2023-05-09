@@ -1,0 +1,46 @@
+/*
+ Styling to GP Application
+*/
+
+body {
+
+    background: #ADD8E6;
+	font-family: 'Roboto', sans-serif;
+}
+h1.heading {
+    padding-top: 20px;
+}
+span.texlabel {
+    font-size: 20px;
+    font-weight: 600;
+}
+input{
+    border-radius: 20px;
+    border: 0px;
+    padding: 10px;
+}
+input[type="submit"] {
+    width: 121px;
+    background: #ff0000;
+    color: white;
+    padding: 13px;
+    font-size: 15px;
+	 cursor: pointer;
+}
+input[type="submit"]:hover{
+    background: #fff;
+    color: black;
+}
+ select#emg {
+			width: 100px;
+			padding: 8px;
+			border: 0px;
+			border-radius: 20px;
+		}
+		
+select#emeg {
+			width: 100px;
+			padding: 8px;
+			border: 0px;
+			border-radius: 20px;
+}

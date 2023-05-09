@@ -1,0 +1,58 @@
+<html>
+
+   <head>
+      <!--CSS file linking-->
+      <link rel="stylesheet" type="text/css" href="./styles.css"/>
+   </head>
+
+   <body>
+      <h1 class="heading">Create an appointment</h1>
+      <!--Form start-->
+      <form id="form">
+         <span class="texlabel"><label for="name">Name:</span>
+         <input type="text" name="name" required /></label>
+         <br /><br />
+         <span class="texlabel"><label for="number">Phone Number:</span>
+         <input type="text" name="number" required /></label>
+         <br /><br />
+         <span class="texlabel"><label for="date">Date of Appointment:</span>
+         <input type="date" name="date" data-date="" data-date-format="YYYY-MM-DD">
+         </label>
+         <br /><br />
+         <span class="texlabel"><label for="time">Time of Appointment:</span>
+         <input type="time" id="time" name="time" min="09:00" max="18:00" required></label>
+         <br /><br />
+         <span class="texlabel"><label for="symptoms">Symptoms:</span>
+         <input type="text" name="symptoms" placeholder="Describe what you feel" required /></label>
+         <br /><br />
+         <span class="texlabel"><label for="Emergency">Emergency Level:</label></span>
+         <select id="emeg" name="emeg">
+            <option value="Normal">Normal</option>
+            <option value="High">High</option>
+         </select>
+         <br /><br />
+         <input type="submit" />
+      </form>
+      
+      <!--Form start-->
+      <!--Storing Data into the Json file using ipcRenderer function-->
+      <script>
+         const electron = require("electron");
+         const { ipcRenderer } = electron;
+         
+         const form = document.getElementById("form");
+         const elements = {};
+         
+         form.addEventListener("submit", event => {
+           event.preventDefault();
+         
+           for (let i = 0; i < form.elements.length; i++) {
+             if (form.elements[i].type !== "submit")
+               elements[form.elements[i].name] = form.elements[i].value;
+           }
+         
+           ipcRenderer.send("appointment:create", elements);
+         });
+      </script>
+   </body>
+</html>
